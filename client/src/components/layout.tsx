@@ -59,13 +59,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       <div className="p-6 border-t border-border/50">
         <div className="bg-card border border-border p-4 rounded-xl">
-          <p className="text-xs text-muted-foreground mb-2">Status Server</p>
+          <p className="text-xs text-muted-foreground mb-2">Status</p>
           <div className="flex items-center gap-2">
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
             </span>
-            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Online - Vercel</span>
+            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Online</span>
           </div>
         </div>
       </div>
@@ -80,14 +80,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Mobile Sidebar */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
+      <div className="md:hidden fixed top-4 right-4 z-50">
         <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon" className="shadow-md">
               <Menu className="size-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-72">
+          <SheetContent side="right" className="p-0 w-72">
             <NavContent />
           </SheetContent>
         </Sheet>
