@@ -9,28 +9,32 @@ import Home from "@/pages/home";
 import CriteriaPage from "@/pages/criteria";
 import AlternativesPage from "@/pages/alternatives";
 import CalculationPage from "@/pages/calculation";
+import { AuthProvider } from "@/hooks/use-auth";
+import AuthPage from "@/pages/auth";
+import { ProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
   return (
-    <Layout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/criteria" component={CriteriaPage} />
-        <Route path="/alternatives" component={AlternativesPage} />
-        <Route path="/calculation" component={CalculationPage} />
-        <Route component={NotFound} />
-      </Switch>
-    </Layout>
+    <Switch>
+      <Route path="/auth" component={AuthPage} />
+      <ProtectedRoute path="/" component={() => <Layout><Home /></Layout>} />
+      <ProtectedRoute path="/criteria" component={() => <Layout><CriteriaPage /></Layout>} />
+      <ProtectedRoute path="/alternatives" component={() => <Layout><AlternativesPage /></Layout>} />
+      <ProtectedRoute path="/calculation" component={() => <Layout><CalculationPage /></Layout>} />
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

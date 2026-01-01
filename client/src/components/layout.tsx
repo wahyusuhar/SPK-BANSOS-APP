@@ -1,16 +1,18 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { 
-  LayoutDashboard, 
-  ListFilter, 
-  Users, 
-  Calculator, 
+import {
+  LayoutDashboard,
+  ListFilter,
+  Users,
+  Calculator,
   Menu,
-  HandHeart
+  HandHeart,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/use-auth";
 
 const NAV_ITEMS = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -22,6 +24,7 @@ const NAV_ITEMS = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { user, logoutMutation } = useAuth();
 
   const NavContent = () => (
     <div className="flex flex-col h-full">
@@ -31,7 +34,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
         <div>
           <h1 className="font-bold text-lg tracking-tight">BansosSys</h1>
-          <p className="text-xs text-muted-foreground font-medium">Sistem Pakar VIKOR</p>
+          <p className="text-xs text-muted-foreground font-medium">
+            Sistem Pakar VIKOR
+          </p>
         </div>
       </div>
 
@@ -40,16 +45,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           const isActive = location === item.href;
           return (
             <Link key={item.href} href={item.href}>
-              <a 
+              <a
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
-                  isActive 
-                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/25" 
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/25"
                     : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 )}
                 onClick={() => setIsMobileOpen(false)}
               >
-                <item.icon className={cn("size-5", isActive ? "text-primary-foreground" : "text-muted-foreground")} />
+                <item.icon
+                  className={cn(
+                    "size-5",
+                    isActive
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground"
+                  )}
+                />
                 {item.label}
               </a>
             </Link>
@@ -57,17 +69,27 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         })}
       </nav>
 
-      <div className="p-6 border-t border-border/50">
-        <div className="bg-card border border-border p-4 rounded-xl">
-          <p className="text-xs text-muted-foreground mb-2">Status</p>
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-            </span>
-            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Online</span>
+      <div className="p-6 border-t border-border/50 space-y-4">
+        {user && (
+          <div className="flex items-center gap-3 px-2">
+            <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+              {user.username.charAt(0).toUpperCase()}
+            </div>
+            <div className="overflow-hidden">
+              <p className="text-sm font-medium truncate">{user.username}</p>
+              <p className="text-xs text-muted-foreground">Admin</p>
+            </div>
           </div>
-        </div>
+        )}
+        <Button
+          variant="outline"
+          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+          onClick={() => logoutMutation.mutate()}
+          disabled={logoutMutation.isPending}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Logout
+        </Button>
       </div>
     </div>
   );
@@ -80,14 +102,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Mobile Sidebar */}
-      <div className="md:hidden fixed top-4 right-4 z-50">
+      <div className="md:hidden fixed top-4 left-4 z-50">
         <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon" className="shadow-md">
               <Menu className="size-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="p-0 w-72">
+          <SheetContent side="left" className="p-0 w-72">
             <NavContent />
           </SheetContent>
         </Sheet>
